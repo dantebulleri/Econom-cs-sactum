@@ -1,0 +1,115 @@
+@import "tailwindcss";
+
+/* ─── LIGHT MODE: Papel de algodón, tinta académica ─── */
+:root {
+  --background: #FDFCFB;
+  --foreground: #1a1a1a;
+  --surface: #F7F5F2;
+  --surface-hover: #EFECE8;
+  --border: #E8E4DF;
+  --border-subtle: #F0EDE9;
+  --accent: #8B7355;
+  --accent-hover: #6D5A43;
+  --accent-light: #C4B49A;
+  --text-primary: #1a1a1a;
+  --text-secondary: #5C5647;
+  --text-tertiary: #8A8478;
+  --text-muted: #B0A99E;
+  --gold: #C9A96E;
+  --gold-light: #E8D5A8;
+  --success: #5B7A5E;
+  --warning: #B8860B;
+  --danger: #8B3A3A;
+  --nav-bg: rgba(253, 252, 251, 0.85);
+}
+
+/* ─── DARK MODE: Biblioteca a medianoche ─── */
+[data-theme="dark"] {
+  --background: #1C1B19;
+  --foreground: #E8E4DF;
+  --surface: #252420;
+  --surface-hover: #2E2D28;
+  --border: #3A3833;
+  --border-subtle: #302E2A;
+  --accent: #C9A96E;
+  --accent-hover: #D4B87E;
+  --accent-light: #8B7355;
+  --text-primary: #E8E4DF;
+  --text-secondary: #B0A99E;
+  --text-tertiary: #8A8478;
+  --text-muted: #5C5647;
+  --gold: #C9A96E;
+  --gold-light: #8B7355;
+  --success: #7A9E7D;
+  --warning: #D4A843;
+  --danger: #C06060;
+  --nav-bg: rgba(28, 27, 25, 0.85);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
+  --color-border: var(--border);
+  --color-border-subtle: var(--border-subtle);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-light: var(--accent-light);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary: var(--text-tertiary);
+  --color-text-muted: var(--text-muted);
+  --color-gold: var(--gold);
+  --color-gold-light: var(--gold-light);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-nav-bg: var(--nav-bg);
+
+  --font-serif: "Georgia", "Times New Roman", "Palatino Linotype", serif;
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "Fira Code", "Cascadia Code", "Consolas", monospace;
+}
+
+/* ─── Base styles ─── */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-serif);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ─── Selection color ─── */
+::selection {
+  background-color: var(--gold-light);
+  color: var(--text-primary);
+}
+
+/* ─── Scrollbar styling ─── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-light);
+}
+
+/* ─── Focus styles ─── */
+*:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}

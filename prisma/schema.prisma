@@ -1,0 +1,114 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// ─── Papers: El corazón de la Bóveda ───
+model Paper {
+  id        String   @id @default(cuid())
+  title     String
+  authors   String   // JSON array stored as string (SQLite limitation)
+  abstract  String?
+  year      Int?
+  journal   String?
+  doi       String?  @unique
+  url       String?
+  pdfUrl    String?
+  fullText  String?
+  source    String   @default("manual") // semantic-scholar | arxiv | crossref | manual
+  status    String   @default("unread") // unread | reading | read | archived
+  rating    Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id])
+
+  notes    Note[]
+  tags     TagOnPaper[]
+  analyses Analysis[]
+}
+
+// ─── Notes: Anotaciones personales por paper ───
+model Note {
+  id        String   @id @default(cuid())
+  content   String
+  paperId   String
+  paper     Paper    @relation(fields: [paperId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ─── Tags: Etiquetas libres ───
+model Tag {
+  id     String       @id @default(cuid())
+  name   String       @unique
+  color  String       @default("#8B7355")
+  papers TagOnPaper[]
+}
+
+// ─── Junction table: Paper <-> Tag (many-to-many) ───
+model TagOnPaper {
+  paperId String
+  tagId   String
+  paper   Paper  @relation(fields: [paperId], references: [id], onDelete: Cascade)
+  tag     Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([paperId, tagId])
+}
+
+// ─── Analyses: Resultados de Analizador, Referee, Traductor ───
+model Analysis {
+  id        String   @id @default(cuid())
+  type      String   // analyzer | referee | translation
+  result    String   // JSON stored as string
+  paperId   String?
+  paper     Paper?   @relation(fields: [paperId], references: [id], onDelete: SetNull)
+  createdAt DateTime @default(now())
+}
+
+// ─── Categories: Clasificación temática ───
+model Category {
+  id          String  @id @default(cuid())
+  name        String  @unique
+  description String?
+  icon        String?
+  papers      Paper[]
+}
+
+// ─── Conversations: Historial de chat ───
+model Conversation {
+  id        String    @id @default(cuid())
+  title     String
+  module    String    // chat | translator | analyzer | ideas | referee
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  messages  Message[]
+}
+
+// ─── Messages: Mensajes individuales ───
+model Message {
+  id             String       @id @default(cuid())
+  role           String       // user | assistant | system
+  content        String
+  metadata       String?      // JSON: tokens, model, etc.
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
+}
+
+// ─── Research Ideas: Ideas generadas ───
+model ResearchIdea {
+  id            String   @id @default(cuid())
+  title         String
+  description   String
+  methodology   String?
+  relatedPapers String?  // JSON array of paper IDs
+  status        String   @default("new") // new | exploring | active | archived
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}

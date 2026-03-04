@@ -19,7 +19,7 @@ export default function ChatPage() {
 
       <div className="flex-1 min-h-0">
         <ChatWindow
-          apiEndpoint="/api/chat"
+          apiEndpoint="/api/economic-chat"
           placeholder="Preguntá sobre economía, modelos, papers, metodología..."
           systemDescription="Tu colega economista está listo para conversar. Preguntale sobre teoría, metodología, datos, o cualquier tema económico."
         />

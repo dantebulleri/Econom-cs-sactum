@@ -6,7 +6,7 @@ import { MessageBubble } from "./MessageBubble";
 
 interface ChatMessage {
   id: string;
-  role: "user" | "assistant";
+  role: "user" | "assistant" | "error";
   content: string;
 }
 
@@ -46,7 +46,28 @@ export function ChatWindow({
         }),
       });
 
-      if (!res.ok || !res.body) throw new Error("Request failed");
+      // Si el backend devuelve error JSON (ej: tema no-económico), mostrarlo
+      if (!res.ok) {
+        let errorMsg = "Error al procesar la solicitud.";
+        try {
+          const errorData = await res.json();
+          if (errorData.error) {
+            errorMsg = typeof errorData.error === "string"
+              ? errorData.error
+              : JSON.stringify(errorData.error);
+          }
+        } catch {
+          // Si no es JSON, usar mensaje genérico
+        }
+        setMessages((prev) => [
+          ...prev,
+          { id: crypto.randomUUID(), role: "error", content: errorMsg },
+        ]);
+        setIsLoading(false);
+        return;
+      }
+
+      if (!res.body) throw new Error("No response body");
 
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
@@ -96,13 +117,26 @@ export function ChatWindow({
           </div>
         ) : (
           <div className="space-y-4">
-            {messages.map((message) => (
-              <MessageBubble
-                key={message.id}
-                role={message.role as "user" | "assistant"}
-                content={message.content}
-              />
-            ))}
+            {messages.map((message) =>
+              message.role === "error" ? (
+                <div key={message.id} className="flex justify-start">
+                  <div className="max-w-[80%] rounded-lg border border-red-300 bg-red-50 px-4 py-3 dark:border-red-800 dark:bg-red-950/30">
+                    <p className="font-serif text-sm text-red-700 dark:text-red-400">
+                      {message.content}
+                    </p>
+                    <p className="mt-1 font-sans text-[10px] text-red-400 dark:text-red-600">
+                      Restricción temática
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <MessageBubble
+                  key={message.id}
+                  role={message.role as "user" | "assistant"}
+                  content={message.content}
+                />
+              )
+            )}
             {isLoading && messages[messages.length - 1]?.role === "user" && (
               <div className="flex justify-start">
                 <div className="rounded-lg border border-border bg-surface px-4 py-3">

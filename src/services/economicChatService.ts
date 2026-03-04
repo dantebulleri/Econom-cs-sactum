@@ -9,21 +9,14 @@
  * El route handler solo orquesta request/response — toda la lógica vive acá.
  */
 
-import fs from "fs";
-import path from "path";
 import { streamText, type ModelMessage } from "ai";
 import { models } from "@/lib/ai/provider";
+import { SYSTEM_PROMPT } from "@/lib/prompts/economic-chat-prompt";
 
-// ── System prompt (leído una vez, cacheado en memoria) ──────────────────────
-
-let cachedSystemPrompt: string | null = null;
+// ── System prompt ───────────────────────────────────────────────────────────
 
 export function getSystemPrompt(): string {
-  if (cachedSystemPrompt) return cachedSystemPrompt;
-
-  const promptPath = path.join(process.cwd(), "prompts", "economic_chat.system.txt");
-  cachedSystemPrompt = fs.readFileSync(promptPath, "utf-8");
-  return cachedSystemPrompt;
+  return SYSTEM_PROMPT;
 }
 
 // ── Filtro pre-LLM ─────────────────────────────────────────────────────────
